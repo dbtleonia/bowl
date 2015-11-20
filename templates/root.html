@@ -1,0 +1,29 @@
+<html>
+  <body>
+    {{range $season, $bowls := .Bowls}}
+    <h1>{{$season}}</h1>
+    <table border="1">
+      <tr>
+	<th>player</th>
+	{{range $bowls}}
+	<th>{{.BowlID}}</th>
+	{{end}}
+      </tr>
+      {{range $user, $picks := index $.Picks $season}}
+      <tr>
+	<td>{{(index $.Players $user).Nickname}}</td>
+	{{range $bowls}}
+	<td>{{(index $picks .BowlID).Winner}}</td>
+	{{end}}
+      </tr>
+      {{end}}
+      <tr>
+	<th>outcome</th>
+	{{range $bowls}}
+	<th>{{(index $.Outcomes $season .BowlID).Winner}}</th>
+	{{end}}
+      </tr>
+    </table>
+    {{end}}
+  </body>
+</html>
