@@ -3,8 +3,12 @@ package bowl
 import (
 	"appengine"
 	"appengine/datastore"
+	"appengine/delay"
+	"fmt"
 	"html/template"
 	"net/http"
+
+	"github.com/gorilla/schema"
 )
 
 type Player struct {
@@ -20,18 +24,30 @@ type Outcome struct {
 	Winner string
 }
 
-type IndexData struct {
-	Bowls    map[string][]*Bowl                    // season -> bowls
-	Players  map[string]Player                     // user -> player
-	Picks    map[string]map[string]map[string]Pick // season -> user -> bowl -> pick
-	Outcomes map[string]map[string]Outcome         // season -> bowl -> outcome
+type BowlScore struct {
+	Correct   int
+	Incorrect int
+}
+
+type RootData struct {
+	Bowls      map[string][]*Bowl                    // season -> bowls
+	Players    map[string]Player                     // user -> player
+	Picks      map[string]map[string]map[string]Pick // season -> user -> bowl -> pick
+	Outcomes   map[string]map[string]Outcome         // season -> bowl -> outcome
+	BowlScores map[string]map[string]BowlScore       // season -> bowl -> score
+}
+
+type UpdateBowlVars struct {
+	Season string
+	Bowl   string
 }
 
 func init() {
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", rootHandler)
+	http.HandleFunc("/updatebowl", updateBowlHandler)
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func rootHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 
 	q := datastore.NewQuery("Player")
@@ -88,13 +104,101 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		outcomeMap[season][bowl] = outcome
 	}
 
+	q = datastore.NewQuery("BowlScore")
+	var bowlScores []BowlScore
+	bowlScoreKeys, err := q.GetAll(c, &bowlScores)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	bowlScoreMap := make(map[string]map[string]BowlScore)
+	for i, bowlScore := range bowlScores {
+		k := bowlScoreKeys[i]
+		season := k.Parent().StringID()
+		bowl := k.StringID()
+		if _, present := bowlScoreMap[season]; !present {
+			bowlScoreMap[season] = make(map[string]BowlScore)
+		}
+		bowlScoreMap[season][bowl] = bowlScore
+	}
+
 	tmpl, err := template.ParseFiles("templates/root.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	if err := tmpl.Execute(w, &IndexData{bowls, playerMap, pickMap, outcomeMap}); err != nil {
+	if err := tmpl.Execute(w, &RootData{bowls, playerMap, pickMap, outcomeMap, bowlScoreMap}); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 }
+
+func updateBowlHandler(w http.ResponseWriter, r *http.Request) {
+	var vars UpdateBowlVars
+	if r.Method == "POST" {
+		if err := r.ParseForm(); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		// TODO: Reuse decoder.
+		decoder := schema.NewDecoder()
+		if err := decoder.Decode(&vars, r.PostForm); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		c := appengine.NewContext(r)
+		k := datastore.NewKey(c, "Outcome", vars.Bowl, 0,
+			datastore.NewKey(c, "Season", vars.Season, 0, nil))
+		var outcome Outcome
+		if err := datastore.Get(c, k, &outcome); err != nil {
+			http.Error(w, fmt.Sprintf("No outcome for season=%q bowl=%q", vars.Season, vars.Bowl), http.StatusBadRequest)
+			return
+		}
+		updateBowl.Call(c, vars.Season, vars.Bowl, &outcome)
+	}
+
+	tmpl, err := template.ParseFiles("templates/updatebowl.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if err := tmpl.Execute(w, vars); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+var updateBowl = delay.Func("key", func(c appengine.Context, season, bowl string, outcome *Outcome) {
+	seasonKey := datastore.NewKey(c, "Season", season, 0, nil)
+
+	// TODO: This query reads picks for all bowls.  Is there a way to filter?
+	q := datastore.NewQuery("Pick").Ancestor(seasonKey)
+	var picks []Pick
+	pickKeys, err := q.GetAll(c, &picks)
+	if err != nil {
+		c.Warningf("%s", err)
+		return
+	}
+	correct, incorrect := 0, 0
+	for i, pick := range picks {
+		k := pickKeys[i]
+		if k.StringID() != bowl {
+			continue
+		}
+		if pick.Winner == outcome.Winner {
+			correct++
+		} else {
+			incorrect++
+		}
+	}
+
+	scoreKey := datastore.NewKey(c, "BowlScore", bowl, 0, seasonKey)
+	_, err = datastore.Put(c, scoreKey, &BowlScore{
+		Correct:   correct,
+		Incorrect: incorrect,
+	})
+	if err != nil {
+		c.Warningf("%s", err)
+		return
+	}
+})

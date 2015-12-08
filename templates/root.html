@@ -23,6 +23,14 @@
 	<th>{{(index $.Outcomes $season .BowlID).Winner}}</th>
 	{{end}}
       </tr>
+      <tr>
+	<th>score</th>
+	{{range $bowls}}
+	<th>
+	  {{(index $.BowlScores $season .BowlID).Correct}}&ndash;{{(index $.BowlScores $season .BowlID).Incorrect}}
+	</th>
+	{{end}}
+      </tr>
     </table>
     {{end}}
   </body>
