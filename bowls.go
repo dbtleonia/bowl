@@ -105,7 +105,7 @@ var (
 			{time.Date(2015, 12, 22, 15, 30, 00, 0, est), "IP", "AKR", "USU", "Famous Idaho Potato", "Akron", "Utah State"},
 			{time.Date(2015, 12, 22, 19, 00, 00, 0, est), "BR", "TOL", "TEM", "Boca Raton", "Toledo", "Temple"},
 			{time.Date(2015, 12, 23, 16, 30, 00, 0, est), "PO", "BSU", "NIU", "Poinsettia", "Boise State", " Northern Illinois"},
-			{time.Date(2015, 12, 23, 20, 00, 00, 0, est), "GO", "BGSU", "GASO", "GoDaddy", "Georgia Southern", "Bowling Green"},
+			{time.Date(2015, 12, 23, 20, 00, 00, 0, est), "GO", "GASO", "BGSU", "GoDaddy", "Georgia Southern", "Bowling Green"},
 			{time.Date(2015, 12, 24, 12, 00, 00, 0, est), "BS", "MTSU", "WMU", "Bahamas", "Middle Tennessee", "Western Michigan"},
 			{time.Date(2015, 12, 24, 20, 00, 00, 0, est), "HI", "SDSU", "CIN", "Hawai'i", "San Diego State", "Cincinnati"},
 			{time.Date(2015, 12, 26, 11, 00, 00, 0, est), "SP", "CONN", "MRSH", "St. Petersburg", "Connecticut", "Marshall"},
