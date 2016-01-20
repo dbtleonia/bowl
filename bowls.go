@@ -136,7 +136,7 @@ var (
 			{time.Date(2016, 01, 02, 15, 20, 00, 0, est), "LI", "KSU", "ARK", "Liberty", "Kansas State", "Arkansas"},
 			{time.Date(2016, 01, 02, 18, 45, 00, 0, est), "AL", "ORE", "TCU", "Alamo", "Oregon", "TCU"},
 			{time.Date(2016, 01, 02, 22, 15, 00, 0, est), "CC", "WVU", "ASU", "Cactus", "West Virginia", "Arizona State"},
-			// {time.Date(2016, 01, 11, 20, 30, 00, 0, est), "NC", "", "", "National Championship", "", ""},
+			{time.Date(2016, 01, 11, 20, 30, 00, 0, est), "NC", "ALA", "CLEM", "National Championship", "Alabama", "Clemson"},
 		},
 	}
 )
