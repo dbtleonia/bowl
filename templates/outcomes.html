@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <link type="text/css" rel="stylesheet" href="/static/common.css" />
+    <script src="/static/outcomes.js"></script>
+  </head>
+  <body>
+    <h1>{{.Season}} Outcomes</h1>
+    <table border="1">
+      <tr>
+        <th>Kickoff</th>
+        <th>Bowl</th>
+        <th>Team 1</th>
+        <th>Team 2</th>
+      </tr>
+      {{range .Bowls}}
+      <tr>
+        <td>{{.Kickoff.Format "Jan 2 3:04 pm"}}</td>
+        <td>{{.BowlName}}</td>
+	<td id="{{.BowlID}}-{{.Team1ID}}"
+            class="{{if (eq .Team1ID (index $.Outcomes .BowlID).Winner)}}selected{{end}}"
+            onclick="clickTeam({{$.Season}}, {{.BowlID}}, {{.Team1ID}}, {{.Team2ID}})"
+            onmouseover="this.style.cursor='pointer'">
+          {{.Team1Name}}
+        </td>
+        <td id="{{.BowlID}}-{{.Team2ID}}"
+            class="{{if (eq .Team2ID (index $.Outcomes .BowlID).Winner)}}selected{{end}}"
+            onclick="clickTeam({{$.Season}}, {{.BowlID}}, {{.Team2ID}}, {{.Team1ID}})"
+            onmouseover="this.style.cursor='pointer'">
+          {{.Team2Name}}
+        </td>
+      </tr>
+      {{end}}
+    </table>
+  </body>
+</html>

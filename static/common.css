@@ -1,0 +1,23 @@
+* {
+    font-family: sans-serif;
+}
+table {
+    border-collapse: collapse;
+}
+p {
+    font-size: 14px;
+}
+td, th {
+    border: 1px solid lightgray;
+    font-size: 14px;
+    padding: 3px;
+}
+.selected {
+    background-color: #bbccee;
+}
+.correct {
+    background-color: #ddffcc;
+}
+.incorrect {
+    background-color: #ffccdd;
+}

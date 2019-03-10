@@ -1,0 +1,163 @@
+<html>
+ <head>
+    <link type="text/css" rel="stylesheet" href="/static/common.css" />
+  </head>
+  <body>
+    <h1>{{.Season}} Leaders</h1>
+    <h2>Number correct</h2>
+    <table border="1">
+      <tr>
+	<th>player</th>
+	<th>score</th>
+	<th>record</th>
+	{{range $.Bowls}}
+	<th>{{.BowlID}}</th>
+	{{end}}
+      </tr>
+      {{range $userID := $.NumCorrect}}
+      <tr>
+	<td>{{(index $.Players $userID).Nickname}}</td>
+	<td>{{printf "%d" (index $.PlayerScores $userID).Correct}}</td>
+	<td>{{(index $.PlayerScores $userID).Correct}}&ndash;{{(index $.PlayerScores $userID).Incorrect}}</td>
+	{{range $.Bowls}}
+	<td class="{{if (and (ne (index $.Outcomes .BowlID).Winner "") (ne (index $.Picks $userID .BowlID).Winner ""))}}{{if (eq (index $.Outcomes .BowlID).Winner (index $.Picks $userID .BowlID).Winner)}}correct{{else}}incorrect{{end}}{{end}}">
+	  {{(index $.Picks $userID .BowlID).Winner}}
+	</td>
+	{{end}}
+      </tr>
+      {{end}}
+      <tr>
+	<th>outcome</th>
+	<th></th>
+	<th></th>
+	{{range $.Bowls}}
+	<th>{{(index $.Outcomes .BowlID).Winner}}</th>
+	{{end}}
+      </tr>
+    </table>
+    <h2>Percent correct</h2>
+    <table border="1">
+      <tr>
+	<th>player</th>
+	<th>score</th>
+	<th>record</th>
+	{{range $.Bowls}}
+	<th>{{.BowlID}}</th>
+	{{end}}
+      </tr>
+      {{range $userID := $.PctCorrect}}
+      <tr>
+	<td>{{(index $.Players $userID).Nickname}}</td>
+	<td>{{printf "%5.3f" (index $.PlayerScores $userID).PctCorrect}}</td>
+	<td>{{(index $.PlayerScores $userID).Correct}}&ndash;{{(index $.PlayerScores $userID).Incorrect}}</td>
+	{{range $.Bowls}}
+	<td class="{{if (and (ne (index $.Outcomes .BowlID).Winner "") (ne (index $.Picks $userID .BowlID).Winner ""))}}{{if (eq (index $.Outcomes .BowlID).Winner (index $.Picks $userID .BowlID).Winner)}}correct{{else}}incorrect{{end}}{{end}}">
+	  {{(index $.Picks $userID .BowlID).Winner}}
+	</td>
+	{{end}}
+      </tr>
+      {{end}}
+      <tr>
+	<th>outcome</th>
+	<th></th>
+	<th></th>
+	{{range $.Bowls}}
+	<th>{{(index $.Outcomes .BowlID).Winner}}</th>
+	{{end}}
+      </tr>
+    </table>
+    <h2>Wilson</h2>
+    <table border="1">
+      <tr>
+	<th>player</th>
+	<th>score</th>
+	<th>record</th>
+	{{range $.Bowls}}
+	<th>{{.BowlID}}</th>
+	{{end}}
+      </tr>
+      {{range $userID := $.Wilson}}
+      <tr>
+	<td>{{(index $.Players $userID).Nickname}}</td>
+	<td>{{printf "%5.3f" (index $.PlayerScores $userID).Wilson}}</td>
+	<td>{{(index $.PlayerScores $userID).Correct}}&ndash;{{(index $.PlayerScores $userID).Incorrect}}</td>
+	{{range $.Bowls}}
+	<td class="{{if (and (ne (index $.Outcomes .BowlID).Winner "") (ne (index $.Picks $userID .BowlID).Winner ""))}}{{if (eq (index $.Outcomes .BowlID).Winner (index $.Picks $userID .BowlID).Winner)}}correct{{else}}incorrect{{end}}{{end}}">
+	  {{(index $.Picks $userID .BowlID).Winner}}
+	</td>
+	{{end}}
+      </tr>
+      {{end}}
+      <tr>
+	<th>outcome</th>
+	<th></th>
+	<th></th>
+	{{range $.Bowls}}
+	<th>{{(index $.Outcomes .BowlID).Winner}}</th>
+	{{end}}
+      </tr>
+    </table>
+    <h2>Entropy</h2>
+    <table border="1">
+      <tr>
+	<th>player</th>
+	<th>score</th>
+	<th>record</th>
+	{{range $.Bowls}}
+	<th>{{.BowlID}}</th>
+	{{end}}
+      </tr>
+      {{range $userID := $.Entropy}}
+      <tr>
+	<td>{{(index $.Players $userID).Nickname}}</td>
+	<td>{{printf "%6.4f" (index $.PlayerScores $userID).Entropy}}</td>
+	<td>{{(index $.PlayerScores $userID).Correct}}&ndash;{{(index $.PlayerScores $userID).Incorrect}}</td>
+	{{range $.Bowls}}
+	<td class="{{if (and (ne (index $.Outcomes .BowlID).Winner "") (ne (index $.Picks $userID .BowlID).Winner ""))}}{{if (eq (index $.Outcomes .BowlID).Winner (index $.Picks $userID .BowlID).Winner)}}correct{{else}}incorrect{{end}}{{end}}">
+	  {{(index $.Picks $userID .BowlID).Winner}}
+	</td>
+	{{end}}
+      </tr>
+      {{end}}
+      <tr>
+	<th>outcome</th>
+	<th></th>
+	<th></th>
+	{{range $.Bowls}}
+	<th>{{(index $.Outcomes .BowlID).Winner}}</th>
+	{{end}}
+      </tr>
+    </table>
+    <h2>Maverick</h2>
+    <table border="1">
+      <tr>
+	<th>player</th>
+	<th>score</th>
+	<th>record</th>
+	{{range $.Bowls}}
+	<th>{{.BowlID}}</th>
+	{{end}}
+      </tr>
+      {{range $userID := $.Maverick}}
+      <tr>
+	<td>{{(index $.Players $userID).Nickname}}</td>
+	<td>{{printf "%5.3f" (index $.PlayerScores $userID).Maverick}}</td>
+	<td>{{(index $.PlayerScores $userID).Correct}}&ndash;{{(index $.PlayerScores $userID).Incorrect}}</td>
+	{{range $.Bowls}}
+	<td class="{{if (and (ne (index $.Outcomes .BowlID).Winner "") (ne (index $.Picks $userID .BowlID).Winner ""))}}{{if (eq (index $.Outcomes .BowlID).Winner (index $.Picks $userID .BowlID).Winner)}}correct{{else}}incorrect{{end}}{{end}}">
+	  {{if (and (ne (index $.Outcomes .BowlID).Winner "") (ne (index $.Picks $userID .BowlID).Winner ""))}}{{if (eq (index $.Outcomes .BowlID).Winner (index $.Picks $userID .BowlID).Winner)}}{{printf "%5.3f" (index $.BowlScores .BowlID).PctIncorrect}}{{else}}0.000{{end}}{{end}}
+	</td>
+	{{end}}
+      </tr>
+      {{end}}
+      <tr>
+	<th>outcome</th>
+	<th></th>
+	<th></th>
+	{{range $.Bowls}}
+	<th>{{(index $.Outcomes .BowlID).Winner}}</th>
+	{{end}}
+      </tr>
+    </table>
+  </body>
+</html>

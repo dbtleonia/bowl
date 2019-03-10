@@ -1,37 +1,55 @@
 <html>
+  <head>
+    <link type="text/css" rel="stylesheet" href="/static/common.css" />
+    <script src="/static/root.js"></script>
+  </head>
   <body>
-    {{range $season, $bowls := .Bowls}}
-    <h1>{{$season}}</h1>
-    <table border="1">
+    <h1>{{.Season}} Bowl Challenge</h1>
+    <p><a href="/leaders/{{.Season}}">Leaderboard</a></p>
+    {{if not .User}}
+    <p><a href="{{.LoginURL}}">Sign in</a></p>
+    {{else}}
+    <p>Welcome, {{.User}}! (<a href="{{.LogoutURL}}">sign out</a>)</p>
+    <form>
+      <p>
+        Nickname:
+        <input id="nicknameInput" type="text" value="{{if .Player}}{{.Player.Nickname}}{{end}}">
+        <input type="button" value="Update nickname" onclick="updateNickname()"/>
+        <span id="nicknameStatus"></span>
+      </p>
+    </form>
+    <p>NOTE #0: If you don't already have a nickname, enter one, click "Update nickname", and reload the page.</p>
+    {{if .Player}}
+    <p>NOTE #1: For each row, click on one of the teams.  If you guess the most correctly, you will get an awesome prize.</p>
+    <p>NOTE #2: You can change your pick for any bowl up until kickoff.</p>
+    <p>NOTE #3: App miiiiight be a little flaky.  Reload the page to make sure your changes got saved.</p>
+    <table>
       <tr>
-	<th>player</th>
-	{{range $bowls}}
-	<th>{{.BowlID}}</th>
-	{{end}}
+        <th>Kickoff</th>
+        <th>Bowl</th>
+        <th>Team 1</th>
+        <th>Team 2</th>
       </tr>
-      {{range $user, $picks := index $.Picks $season}}
+      {{range .Bowls}}
       <tr>
-	<td>{{(index $.Players $user).Nickname}}</td>
-	{{range $bowls}}
-	<td>{{(index $picks .BowlID).Winner}}</td>
-	{{end}}
+        <td>{{.Kickoff.Format "Jan 2 3:04 pm"}}</td>
+        <td>{{.BowlName}}</td>
+	<td id="{{.BowlID}}-{{.Team1ID}}"
+            class="{{if (eq .Team1ID (index $.Picks .BowlID).Winner)}}selected{{end}}"
+            onclick="clickTeam('{{$.Season}}', '{{.BowlID}}', '{{.Team1ID}}', '{{.Team2ID}}')"
+            onmouseover="this.style.cursor='pointer'">
+          {{.Team1Name}}
+        </td>
+        <td id="{{.BowlID}}-{{.Team2ID}}"
+            class="{{if (eq .Team2ID (index $.Picks .BowlID).Winner)}}selected{{end}}"
+            onclick="clickTeam('{{$.Season}}', '{{.BowlID}}', '{{.Team2ID}}', '{{.Team1ID}}')"
+            onmouseover="this.style.cursor='pointer'">
+          {{.Team2Name}}
+        </td>
       </tr>
       {{end}}
-      <tr>
-	<th>outcome</th>
-	{{range $bowls}}
-	<th>{{(index $.Outcomes $season .BowlID).Winner}}</th>
-	{{end}}
-      </tr>
-      <tr>
-	<th>score</th>
-	{{range $bowls}}
-	<th>
-	  {{(index $.BowlScores $season .BowlID).Correct}}&ndash;{{(index $.BowlScores $season .BowlID).Incorrect}}
-	</th>
-	{{end}}
-      </tr>
     </table>
+    {{end}}
     {{end}}
   </body>
 </html>

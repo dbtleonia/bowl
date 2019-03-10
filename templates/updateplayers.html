@@ -1,11 +1,10 @@
 <html>
   <body>
     {{if .Season}}
-    <p>Enqueued bowl update for season {{.Season}} bowl {{.Bowl}}</p>
+    <p>Enqueued players update for season {{.Season}}</p>
     {{end}}
-    <form action="/admin/updatebowl" method="POST">
+    <form action="/admin/updateplayers" method="POST">
       Season: <input type="text" name="Season" value="{{.Season}}">
-      Bowl: <input type="text" name="Bowl">
       <input type="submit" value="Submit">
     </form>
   </body>
